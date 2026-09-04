@@ -1,0 +1,137 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+*.so
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+pip-wheel-metadata/
+.Python
+
+# Packaging / build
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+*.whl
+
+# Caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.pdm-build/
+.tox/
+.nox/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints/
+
+# Coverage
+.coverage
+.coverage.*
+htmlcov/
+
+# Logs
+*.log
+logs/
+.log
+
+# =========================
+# GIS / Geospatial
+# =========================
+
+# Shapefiles (multi-file formats)
+*.shp
+*.shx
+*.dbf
+*.prj
+*.qix
+*.sbn
+*.sbx
+*.cpg
+
+# GeoPackage / GeoJSON / Parquet
+*.gpkg
+*.geojson
+*.topojson
+*.parquet
+*.parquet.tmp
+
+# Raster formats
+*.tif
+*.tiff
+*.jp2
+*.png.aux.xml
+*.tif.aux.xml
+*.vrt
+*.ovr
+*.msk
+
+# GDAL / QGIS noise
+*.aux.xml
+*.qpj
+*.xml
+*.lock
+
+# =========================
+# Databases
+# =========================
+*.duckdb
+*.duckdb.wal
+*.duckdb.tmp
+*.db
+*.sqlite
+*.sqlite3
+
+# PostgreSQL local files
+*.pgpass
+*.psql_history
+
+# =========================
+# Data directories
+# =========================
+data_raw/*
+!data_raw/.gitkeep
+
+data/*
+!data/.gitkeep
+
+output/
+outputs/
+exports/
+results/
+cache/
+caches/
+tmp/
+temp/
+scratch/
+artifacts/
+
+# =========================
+# Secrets / Environment
+# =========================
+.env
+.env.*
+!.env.example
+secrets.yml
+*.pem
+*.key
+
+# =========================
+# IDE / OS
+# =========================
+.vscode/
+.idea/
+*.iml
+*.
