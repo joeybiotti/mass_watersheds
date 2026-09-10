@@ -9,7 +9,7 @@ def main():
     os.environ["SHAPE_RESTORE_SHX"] = "Yes"
 
     shp_path = Path("data/raw/TOWNSSURVEY_POLY.shp")
-    output_path = Path("data/raw/municipalities_clean.geojson")
+    output_path = Path("data/clean/municipalities_clean.geojson")
 
     print("Loading municipal shapefile...")
     gdf = gdp.read_file(shp_path)
