@@ -1,16 +1,20 @@
-from pathlib import Path
-
-import geopandas as gpd
+from scripts.ingestion.ingest_municipal_boundaries import main as ingest_municipal
+from scripts.ingestion.ingest_watersheds import ingest_watersheds
+from scripts.overlays.clip_watersheds_to_municipalities import (
+    clip_watersheds_to_municipalities,
+)
+from scripts.validation.validate_municipal_boundaries import (
+    validate_municipal_boundaries,
+)
+from scripts.validation.validate_watersheds import validate_watershed
 
 
 def main():
-    shp = Path("data/raw/TOWNSSURVEY_POLY.shp")
-    out = Path("data/raw/municipalities.geojson")
-
-    gdf = gpd.read_file(shp)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    gdf.to_file(out, driver="GeoJSON")
-    print(f"Saved municipal boundaries to {out}")
+    ingest_municipal()
+    ingest_watersheds()
+    validate_municipal_boundaries()
+    validate_watershed()
+    clip_watersheds_to_municipalities()
 
 
 if __name__ == "__main__":
