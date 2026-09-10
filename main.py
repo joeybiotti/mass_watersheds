@@ -1,5 +1,7 @@
-import geopandas as gpd
 from pathlib import Path
+
+import geopandas as gpd
+
 
 def main():
     shp = Path("data/raw/TOWNSSURVEY_POLY.shp")
@@ -9,6 +11,7 @@ def main():
     out.parent.mkdir(parents=True, exist_ok=True)
     gdf.to_file(out, driver="GeoJSON")
     print(f"Saved municipal boundaries to {out}")
+
 
 if __name__ == "__main__":
     main()
