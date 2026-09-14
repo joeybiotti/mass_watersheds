@@ -1,7 +1,13 @@
+import logging
 import os
 from pathlib import Path
 
 import geopandas as gdp
+
+from scripts.logging_setup import setup_logging
+
+setup_logging()
+log = logging.getLogger(__name__)
 
 
 def main():
@@ -11,7 +17,7 @@ def main():
     shp_path = Path("data/raw/TOWNSSURVEY_POLY.shp")
     output_path = Path("data/clean/municipalities_clean.geojson")
 
-    print("Loading municipal shapefile...")
+    log.info("Loading municipal shapefile...")
     gdf = gdp.read_file(shp_path)
 
     # Fix geometry
@@ -28,11 +34,11 @@ def main():
 
     gdf = gdf.to_crs(4326)
 
-    print("Saving cleaned GeoJSON...")
+    log.info("Saving cleaned GeoJSON...")
     output_path.parent.mkdir(parents=True, exist_ok=True)
     gdf.to_file(output_path, driver="GeoJSON")
 
-    print(f"Saved municipal boundaries to {output_path}.")
+    log.info(f"Saved municipal boundaries to {output_path}.")
 
 
 if __name__ == "__main__":

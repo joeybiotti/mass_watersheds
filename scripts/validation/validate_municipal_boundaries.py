@@ -1,6 +1,12 @@
+import logging
 from pathlib import Path
 
 import geopandas as gpd
+
+from scripts.logging_setup import setup_logging
+
+setup_logging()
+log = logging.getLogger(__name__)
 
 
 def validate_municipal_boundaries():
@@ -15,8 +21,8 @@ def validate_municipal_boundaries():
 
     invalid_after = ~gdf.geometry.is_valid
 
-    print(f"Invalid before fix: {invalid_before.sum()}")
-    print(f"Invalid after fix: {invalid_after.sum()}")
+    log.info(f"Invalid before fix: {invalid_before.sum()}")
+    log.info(f"Invalid after fix: {invalid_after.sum()}")
 
     dst.parent.mkdir(parents=True, exist_ok=True)
     gdf.to_file(dst, driver="GeoJSON")
