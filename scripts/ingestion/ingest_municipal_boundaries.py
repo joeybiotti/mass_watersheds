@@ -1,44 +1,30 @@
 import logging
 import os
-from pathlib import Path
 
-import geopandas as gdp
+import geopandas as gpd
 
+from scripts.config import load_config
 from scripts.logging_setup import setup_logging
 
 setup_logging()
 log = logging.getLogger(__name__)
+config = load_config()
 
 
 def main():
-    # Rebuild missing SHX if needed
-    os.environ["SHAPE_RESTORE_SHX"] = "Yes"
+    log.info("Starting municipal boundary ingestion")
 
-    shp_path = Path("data/raw/TOWNSSURVEY_POLY.shp")
-    output_path = Path("data/clean/municipalities_clean.geojson")
+    raw_path = os.path.join(config["data"]["raw_dir"], config["files"]["municipal_raw"])
 
-    log.info("Loading municipal shapefile...")
-    gdf = gdp.read_file(shp_path)
+    clean_path = os.path.join(
+        config["data"]["clean_dir"], config["files"]["municipal_clean"]
+    )
 
-    # Fix geometry
-    gdf = gdf.set_geometry(gdf.geometry.buffer(0))
+    gdf = gpd.read_file(raw_path)
+    log.info(f"Loaded {len(gdf)} municipal boundaries")
 
-    # Pick dissolve field
-    town_field = "TOWN" if "TOWN" in gdf.columns else "TOWN_ID"
-
-    # Keep only needed columns
-    gdf = gdf[[town_field, "geometry"]]
-
-    # Dissolve into single polygon
-    gdf = gdf.dissolve(by=town_field).reset_index()
-
-    gdf = gdf.to_crs(4326)
-
-    log.info("Saving cleaned GeoJSON...")
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    gdf.to_file(output_path, driver="GeoJSON")
-
-    log.info(f"Saved municipal boundaries to {output_path}.")
+    gdf.to_file(clean_path, driver="GeoJSON")
+    log.info(f"Saved cleaned municipal boundaries → {clean_path}")
 
 
 if __name__ == "__main__":

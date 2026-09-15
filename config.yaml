@@ -1,0 +1,24 @@
+data:
+  raw_dir: data/raw
+  clean_dir: data/clean
+  validated_dir: data/validated
+  enriched_dir: data/enriched
+
+files:
+  municipal_raw: TOWNSSURVEY_POLY.shp
+  watersheds_raw: watshdp1.shp
+
+  municipal_clean: municipalities_clean.geojson
+  watersheds_clean: watersheds_clean.geojson
+
+  municipal_validated: municipalities.geojson
+  watersheds_validated: watersheds.geojson
+
+  enriched_overlay: watersheds_by_municipality.geojson
+
+crs:
+  municipal: EPSG:26986
+  watersheds: EPSG:26986
+
+overlay:
+  method: intersection

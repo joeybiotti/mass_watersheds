@@ -1,36 +1,33 @@
 import logging
 import os
-from pathlib import Path
 
 import geopandas as gpd
 
+from scripts.config import load_config
 from scripts.logging_setup import setup_logging
 
 setup_logging()
 log = logging.getLogger(__name__)
+config = load_config()
 
 
-def ingest_watersheds():
-    os.environ["SHAPE_RESTORE_SHX"] = "Yes"
+def main():
+    log.info("Starting watershed ingestion")
 
-    src = Path("data/raw/watshdp1.shp")
-    dst = Path("data/clean/watersheds_clean.geojson")
+    raw_path = os.path.join(
+        config["data"]["raw_dir"], config["files"]["watersheds_raw"]
+    )
 
-    log.info("Loading watershed shapefile...")
-    gdf = gpd.read_file(src)
+    clean_path = os.path.join(
+        config["data"]["clean_dir"], config["files"]["watersheds_clean"]
+    )
 
-    gdf = gdf.set_geometry(gdf.geometry.buffer(0))
+    gdf = gpd.read_file(raw_path)
+    log.info(f"Loaded {len(gdf)} watersheds")
 
-    if gdf.crs and gdf.crs.to_epsg() != 4326:
-        gdf = gdf.to_crs(4326)
-
-    dst.parent.mkdir(parents=True, exist_ok=True)
-
-    log.info("Saving cleaned watershed GeoJSON...")
-    gdf.to_file(dst, driver="GeoJSON")
-
-    log.info(f"Saved watershed boundaries to {dst}")
+    gdf.to_file(clean_path, driver="GeoJSON")
+    log.info(f"Saved cleaned watersheds → {clean_path}")
 
 
 if __name__ == "__main__":
-    ingest_watersheds()
+    main()
