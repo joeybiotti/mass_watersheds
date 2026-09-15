@@ -1,30 +1,38 @@
 import logging
-from pathlib import Path
+import os
 
 import geopandas as gpd
 
+from scripts.config import load_config
 from scripts.logging_setup import setup_logging
 
 setup_logging()
 log = logging.getLogger(__name__)
+config = load_config()
 
 
-def validate_watershed():
-    src = Path("data/clean/watersheds_clean.geojson")
-    dst = Path("data/validated/watersheds.geojson")
+def main():
+    log.info("Validating watersheds")
 
-    gdf = gpd.read_file(src)
+    clean_path = os.path.join(
+        config["data"]["clean_dir"], config["files"]["watersheds_clean"]
+    )
 
-    invalid_before = ~gdf.geometry.is_valid
-    gdf.loc[invalid_before, "geometry"] = gdf.loc[invalid_before].buffer(0)
-    invalid_after = ~gdf.geometry.is_valid
+    gdf = gpd.read_file(clean_path)
+    log.info("Loaded watersheds for validation")
 
-    log.info(f"Invalid before fix: {invalid_before.sum()}")
-    log.info(f"Invalid after fix: {invalid_after.sum()}")
+    # Correct emptiness check
+    if gdf.empty:
+        log.error("Watersheds dataset is empty")
+        return
 
-    dst.parent.mkdir(parents=True, exist_ok=True)
-    gdf.to_file(dst, driver="GeoJSON")
+    # Optional geometry validity check
+    if not gdf.geometry.is_valid.all():
+        log.error("Some watershed geometries are invalid")
+        return
+
+    log.info("Watersheds validation passed")
 
 
 if __name__ == "__main__":
-    validate_watershed()
+    main()
