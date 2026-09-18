@@ -11,6 +11,23 @@ log = logging.getLogger(__name__)
 config = load_config()
 
 
+def validate_watersheds(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    """Pure validation logic for watershed boundaries."""
+    if gdf.empty:
+        raise ValueError("Watersheds dataset is empty")
+
+    if not gdf.geometry.is_valid.all():
+        raise ValueError("Watershed geometries contain invalid shapes")
+
+    if "WATERSHED" not in gdf.columns:
+        raise ValueError("Missing required column: WATERSHED")
+
+    if gdf.crs is None or gdf.crs.to_epsg() != 4326:
+        raise ValueError("Watersheds must use EPSG:4326")
+
+    return gdf
+
+
 def main():
     log.info("Validating watersheds")
 
@@ -19,19 +36,9 @@ def main():
     )
 
     gdf = gpd.read_file(clean_path)
-    log.info("Loaded watersheds for validation")
+    validated = validate_watersheds(gdf)
 
-    # Correct emptiness check
-    if gdf.empty:
-        log.error("Watersheds dataset is empty")
-        return
-
-    # Optional geometry validity check
-    if not gdf.geometry.is_valid.all():
-        log.error("Some watershed geometries are invalid")
-        return
-
-    log.info("Watersheds validation passed")
+    log.info(f"Watersheds validated → {len(validated)} features")
 
 
 if __name__ == "__main__":
