@@ -11,27 +11,34 @@ log = logging.getLogger(__name__)
 config = load_config()
 
 
+def validate_municipal_boundaries(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    """Pure validation logic for tests."""
+    if gdf.empty:
+        raise ValueError("Municipal boundaries are empty")
+
+    if not gdf.geometry.is_valid.all():
+        raise ValueError("Invalid geometries in municipal boundaries")
+
+    if "TOWN" not in gdf.columns:
+        raise ValueError("Missing TOWN column")
+
+    if gdf.crs is None or gdf.crs.to_epsg() != 4326:
+        raise ValueError("Municipal boundaries must be in EPSG:4326")
+
+    return gdf
+
+
 def main():
     log.info("Validating municipal boundaries")
 
-    clean_path = os.path.join(
+    raw_path = os.path.join(
         config["data"]["clean_dir"], config["files"]["municipal_clean"]
     )
 
-    gdf = gpd.read_file(clean_path)
-    log.info("Loaded municipal boundaries for validation")
+    gdf = gpd.read_file(raw_path)
+    validated = validate_municipal_boundaries(gdf)
 
-    # Correct emptiness check
-    if gdf.empty:
-        log.error("Municipal boundaries dataset is empty")
-        return
-
-    # Optional: check geometry validity
-    if not gdf.geometry.is_valid.all():
-        log.error("Some municipal geometries are invalid")
-        return
-
-    log.info("Municipal boundaries validation passed")
+    log.info(f"Municipal boundaries validated → {len(validated)} features")
 
 
 if __name__ == "__main__":

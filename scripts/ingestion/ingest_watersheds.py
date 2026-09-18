@@ -11,6 +11,11 @@ log = logging.getLogger(__name__)
 config = load_config()
 
 
+def fetch_watersheds(path: str) -> gpd.GeoDataFrame:
+    """Pure function for tests — loads watershed boundaries from a path."""
+    return gpd.read_file(path)
+
+
 def main():
     log.info("Starting watershed ingestion")
 
@@ -22,7 +27,7 @@ def main():
         config["data"]["clean_dir"], config["files"]["watersheds_clean"]
     )
 
-    gdf = gpd.read_file(raw_path)
+    gdf = fetch_watersheds(raw_path)
     log.info(f"Loaded {len(gdf)} watersheds")
 
     gdf.to_file(clean_path, driver="GeoJSON")
