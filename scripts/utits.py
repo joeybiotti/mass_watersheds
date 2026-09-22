@@ -10,7 +10,7 @@ def clean_geometries(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     if not gdf.geometry.is_valid.all():
         log.warning("Found invalid geometries, attempting repair.")
         gdf["geometry"] = gdf.geometry.apply(
-            lambda x: x.buffer(0) if not x.is_valid() else x
+            lambda x: x.buffer(0) if not x.is_valid else x
         )
 
     return gdf
