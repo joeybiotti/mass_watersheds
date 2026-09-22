@@ -107,6 +107,8 @@ data_raw/*
 data/*
 !data/.gitkeep
 
+output/
+outputs/
 exports/
 results/
 cache/
