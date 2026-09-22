@@ -5,6 +5,7 @@ import geopandas as gpd
 
 from scripts.config import load_config
 from scripts.logging_setup import setup_logging
+from scripts.utits import clean_geometries
 
 setup_logging()
 log = logging.getLogger(__name__)
@@ -14,16 +15,6 @@ config = load_config()
 def fetch_watersheds(path: str) -> gpd.GeoDataFrame:
     """Pure function for tests — loads watershed boundaries from a path."""
     return gpd.read_file(path)
-
-
-def clean_geometries(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
-    """Fix invalid geometries using buffer(0) trick."""
-    if not gdf.geometry.is_valid.all():
-        log.warning("Found invalid geometries, attempting repair")
-        gdf["geometry"] = gdf.geometry.apply(
-            lambda x: x.buffer(0) if not x.is_valid else x
-        )
-    return gdf
 
 
 def main():
