@@ -20,7 +20,7 @@ def validate_watersheds(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         raise ValueError("Watershed geometries contain invalid shapes")
 
     if "NAME" not in gdf.columns:
-        raise ValueError("Missing required column: WATERSHED")
+        raise ValueError("Missing required column: NAME")
 
     if gdf.crs is None or gdf.crs.to_epsg() != 4326:
         raise ValueError("Watersheds must use EPSG:4326")
