@@ -19,7 +19,7 @@ overlay:
 
 # Run visualization
 viz:
-	python scripts/viz/generate_folium_map.py
+	python -m scripts.viz.generate_folium_map
 
 # Run tests
 test:
