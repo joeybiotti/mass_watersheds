@@ -16,6 +16,16 @@ def fetch_watersheds(path: str) -> gpd.GeoDataFrame:
     return gpd.read_file(path)
 
 
+def clean_geometries(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    """Fix invalid geometries using buffer(0) trick."""
+    if not gdf.geometry.is_valid.all():
+        log.warning("Found invalid geometries, attempting repair")
+        gdf["geometry"] = gdf.geometry.apply(
+            lambda x: x.buffer(0) if not x.is_valid else x
+        )
+    return gdf
+
+
 def main():
     log.info("Starting watershed ingestion")
 
@@ -29,6 +39,13 @@ def main():
 
     gdf = fetch_watersheds(raw_path)
     log.info(f"Loaded {len(gdf)} watersheds")
+
+    # Fix geometries
+    gdf = clean_geometries(gdf)
+
+    # Ensure correct CRS
+    if gdf.crs is None or gdf.crs.to_epsg() != 4326:
+        gdf = gdf.to_crs(4326)
 
     gdf.to_file(clean_path, driver="GeoJSON")
     log.info(f"Saved cleaned watersheds → {clean_path}")
